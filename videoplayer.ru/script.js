@@ -12,40 +12,67 @@ window.onload = function() {
 		volButton: document.getElementById("volume"),
 		spButton: document.getElementById("speed"),
 		spSelect: document.getElementById("speedSelect"),
-		currentTime: document.getElementById("current")
-	};
+		currentTime: document.getElementById("current"),
+		isMouseDown: false,
+		oldVolumeValue: 0,
+		fullScreen: false
+	};	
 	
 	controls.video.addEventListener("click", function() {
 		if (controls.video.paused) {
 			controls.video.play();
-			document.getElementById("playpause").style.backgroundImage = "url('src/icons/pause.jpg')";
+			controls.ppButton.style.backgroundImage = "url('src/icons/pause.jpg')";
 		}
 		else {
 			controls.video.pause();
-			document.getElementById("playpause").style.backgroundImage = "url('src/icons/play.jpg')";
+			controls.ppButton.getElementById("playpause").style.backgroundImage = "url('src/icons/play.jpg')";
 		}
 	});
 	controls.fsButton.addEventListener("click", function() {
-		if (controls.video.width == 960) {
+		if (!controls.fullScreen) {
+			controls.fullScreen = true;
 			controls.fsButton.style.backgroundImage = "url('src/icons/normalScreen.jpg')";
-			launchFullScreen(controls.video);
+			
+			let contr = document.getElementById("control");
+			contr.style.position = "absolute";
+			contr.style.zIndex = 2147483647;
+			contr.style.bottom = 0;
+			
+			if(controls.video.requestFullScreen) {
+				controls.video.requestFullScreen();
+			} else if(controls.video.mozRequestFullScreen) {
+				controls.video.mozRequestFullScreen();
+			} else if(controls.video.webkitRequestFullScreen) {
+				controls.video.webkitRequestFullScreen();
+			}
 		}
 		else
 		{
+			controls.fullScreen = false;
 			controls.fsButton.style.backgroundImage = "url('src/icons/fullScreen.jpg')";
-			controls.video.width = 960;
-			controls.video.height = 540;
+			
+			let contr = document.getElementById("control");
+			contr.style.position = "relative";
+			contr.style.zIndex = 1;
+			
+			if(controls.video.exitFullscreen) {
+				controls.video.exitFullscreen();
+			} else if(controls.video.mozExitFullscreen) {
+				controls.video.mozExitFullscreen();
+			} else if(controls.video.webkitExitFullscreen) {
+				controls.video.webkitExitFullscreen();
+			}
 		}
 	});
 	
 	controls.ppButton.addEventListener("click", function() {
 		if (controls.video.paused) {
 			controls.video.play();
-			document.getElementById("playpause").style.backgroundImage = "url('src/icons/pause.jpg')";
+			controls.ppButton.style.backgroundImage = "url('src/icons/pause.jpg')";
 		}
 		else {
 			controls.video.pause();
-			document.getElementById("playpause").style.backgroundImage = "url('src/icons/play.jpg')";
+			controls.ppButton.style.backgroundImage = "url('src/icons/play.jpg')";
 		}
 	});
 	
@@ -75,9 +102,16 @@ window.onload = function() {
 	});
 	controls.video.addEventListener("timeupdate", function() {
 		var w = controls.progress.style.width;
-		controls.currentTime.innerHTML = toTimeFormat(controls.video.currentTime);
-		w = controls.video.currentTime / controls.video.duration * 85;
-		controls.progress.style.width = Math.floor(w) + '%';
+		w = controls.video.currentTime / controls.video.duration * (controls.currentTime.offsetLeft - controls.progressBar.offsetLeft);
+		if (!controls.isMouseDown) {
+			controls.currentTime.innerHTML = toTimeFormat(controls.video.currentTime);
+			controls.progress.style.width = Math.floor(w);
+		}
+	});
+	
+	controls.video.addEventListener("ended", function() {
+		controls.video.pause();
+		controls.ppButton.style.backgroundImage = "url('src/icons/play.jpg')";
 	});
 	
 	controls.volume.addEventListener("input", function() {		
@@ -88,6 +122,20 @@ window.onload = function() {
 	});
 	controls.volButton.addEventListener("mouseout", function () {
 		controls.volume.style.display = "none";
+	});
+	controls.volButton.addEventListener("click", function(e) {
+		if (e.pageY > this.offsetTop) {
+			if (controls.volume.value == 0) {
+				controls.volume.value = controls.oldVolumeValue;
+				controls.volButton.style.backgroundImage = "url('src/icons/volume.jpg')";
+			}
+			else {
+				controls.oldVolumeValue = controls.volume.value;
+				controls.volume.value = 0;
+				controls.volButton.style.backgroundImage = "url('src/icons/muted.jpg')";
+			}
+			controls.video.volume = controls.volume.value / 100;
+		}
 	});
 	
 	controls.spButton.addEventListener("click", function() {
@@ -103,26 +151,55 @@ window.onload = function() {
 		controls.spSelect.style.display = "none";
 	});
 
-	controls.progressBar.onmousedown = function(e) {
-		var w = (e.pageX - this.offsetLeft);
-		var ct = w / (this.clientWidth * 0.85) * controls.video.duration;
-		
-		controls.progressBar.onmousemove = function(e) {
-			w = ((e.pageX < (controls.progressBar.clientWidth * 0.85 + controls.progressBar.offsetLeft)) ? (e.pageX) : 
-				(controls.progressBar.clientWidth * 0.85 + controls.progressBar.offsetLeft)) - controls.progressBar.offsetLeft;
+	controls.progressBar.addEventListener("mousedown", function(e) {
+		if (e.pageX < controls.currentTime.offsetLeft) {
+			controls.isMouseDown = true;
+			let oldProgress = controls.progress.clientWidth;
+			let oldTime = controls.video.currentTime;
+			var w = (e.pageX - this.offsetLeft);
+			var ct = w / (controls.currentTime.offsetLeft - this.offsetLeft) * controls.video.duration;				
+			
+			
 			controls.progress.style.width = w;
-			ct = w / (this.clientWidth * 0.85) * controls.video.duration;				
 			controls.currentTime.innerHTML = toTimeFormat(ct);
-		}
-		
-		controls.progressBar.onmouseup = function(e) {
-			controls.progress.style.width = w;
-			controls.video.currentTime = ct;
-			controls.progressBar.onmousemove = null;
-			return;
+			
+			controls.progressBar.onmousemove = function(e) {
+				w = ((e.pageX < (controls.currentTime.offsetLeft)) ? (e.pageX) : 
+					(controls.currentTime.offsetLeft)) - controls.progressBar.offsetLeft;
+				controls.progress.style.width = w;
+				ct = w / (controls.currentTime.offsetLeft - controls.progressBar.offsetLeft) * controls.video.duration;				
+				controls.currentTime.innerHTML = toTimeFormat(ct);
+				controls.progress.style.width = w;
+				controls.video.currentTime = ct;
+			}
+			
+			controls.progressBar.onmouseup = function(e) {
+				if (controls.isMouseDown) {
+					controls.isMouseDown = false;
+					controls.progress.style.width = w;
+					controls.video.currentTime = ct;
+					controls.progressBar.onmousemove = null;
+					return;
+				}
+			}
+			
+			controls.progressBar.addEventListener("mouseout", function(e) {
+				if (controls.isMouseDown && 
+				 (e.pageY < controls.progressBar.offsetTop || e.pageY > controls.progressBar.offsetTop + controls.progressBar.clientHeight || 
+				 e.pageX < controls.progressBar.offsetLeft || e.pageX > controls.currentTime.offsetLeft)) {
+					controls.isMouseDown = false;
+					controls.progress.style.width = oldProgress;
+					controls.video.currentTime = oldTime;
+					controls.progressBar.onmousemove = null;
+					return;
+				}
+			});
 		}		
-	}
+	});
+	
 }
+
+
 
 toTimeFormat = function (time) {
 	time = Math.floor(time) + 1;
@@ -142,21 +219,7 @@ toTimeFormat = function (time) {
 
 //Запустить отображение в полноэкранном режиме
 function launchFullScreen(element) {
-	if(element.requestFullScreen) {
-		element.requestFullScreen();
-	} else if(element.mozRequestFullScreen) {
-		element.mozRequestFullScreen();
-	} else if(element.webkitRequestFullScreen) {
-		element.webkitRequestFullScreen();
-	}
+	
 }
 // Выход из полноэкранного режима
-function cancelFullscreen() {
-	if(document.cancelFullScreen) {
-		document.cancelFullScreen();
-	} else if(document.mozCancelFullScreen) {
-		document.mozCancelFullScreen();
-	} else if(document.webkitCancelFullScreen) {
-		document.webkitCancelFullScreen();
-	}
-}
+ 

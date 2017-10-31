@@ -1,17 +1,18 @@
 
-#controls {
+#control {
+	user-select: none;
 	display: flex;
 	width: 960px;
 	height: 25px;
 	align: center;
 }
 
-#controls span {
+#control span {
 	width: 25px;
 	height: inherit;
 }
 
-#controls div {
+#control div {
 	flex-grow: 82;
 	height: inherit;
 	background: #000;
@@ -81,4 +82,8 @@
 #speedSelect {
 	display: none;
 	margin-top: 25px;
+}
+
+::-webkit-media-controls {
+	display: none !important;
 }

@@ -1,6 +1,7 @@
 
 window.onload = function() {
-	var controls = {
+	let controls = {
+		container: document.getElementById("control"),
 		video: document.getElementById("myvideo"),
 		ppButton: document.getElementById("playpause"),
 		mlButton: document.getElementById("moveL"),
@@ -18,6 +19,8 @@ window.onload = function() {
 		fullScreen: false
 	};	
 	
+	const timeOffset = 5;
+	
 	controls.video.addEventListener("click", function() {
 		if (controls.video.paused) {
 			controls.video.play();
@@ -25,7 +28,7 @@ window.onload = function() {
 		}
 		else {
 			controls.video.pause();
-			controls.ppButton.getElementById("playpause").style.backgroundImage = "url('src/icons/play.jpg')";
+			controls.ppButton.style.backgroundImage = "url('src/icons/play.jpg')";
 		}
 	});
 	controls.fsButton.addEventListener("click", function() {
@@ -33,10 +36,9 @@ window.onload = function() {
 			controls.fullScreen = true;
 			controls.fsButton.style.backgroundImage = "url('src/icons/normalScreen.jpg')";
 			
-			let contr = document.getElementById("control");
-			contr.style.position = "absolute";
-			contr.style.zIndex = 2147483647;
-			contr.style.bottom = 0;
+			controls.container.style.position = "absolute";
+			controls.container.style.zIndex = 2147483647;
+			controls.container.style.bottom = 0;
 			
 			if(controls.video.requestFullScreen) {
 				controls.video.requestFullScreen();
@@ -51,9 +53,8 @@ window.onload = function() {
 			controls.fullScreen = false;
 			controls.fsButton.style.backgroundImage = "url('src/icons/fullScreen.jpg')";
 			
-			let contr = document.getElementById("control");
-			contr.style.position = "relative";
-			contr.style.zIndex = 1;
+			controls.container.style.position = "relative";
+			controls.container.style.zIndex = 1;
 			
 			if(controls.video.exitFullscreen) {
 				controls.video.exitFullscreen();
@@ -77,19 +78,18 @@ window.onload = function() {
 	});
 	
 	controls.mlButton.addEventListener("click", function() {
-	var video = document.getElementById("myvideo");
-		if (controls.video.currentTime >= 5)
+		if (controls.video.currentTime >= timeOffset)
 		{
-			controls.video.currentTime -= 5;
+			controls.video.currentTime -= timeOffset;
 		}
 		else {
 			controls.video.currentTime = 0;
 		}
 	});
 	controls.mrButton.addEventListener("click", function() {
-		if (controls.video.duration - controls.video.currentTime >= 5)
+		if (controls.video.duration - controls.video.currentTime >= timeOffset)
 		{
-			controls.video.currentTime += 5;
+			controls.video.currentTime += timeOffset;
 		}
 		else {
 			controls.video.currentTime = controls.video.duration;
@@ -97,11 +97,11 @@ window.onload = function() {
 	});
 	
 	controls.video.addEventListener("canplay", function() {
-		var duration = document.getElementById("duration");
+		let duration = document.getElementById("duration");
 		duration.innerHTML = toTimeFormat(controls.video.duration);
 	});
 	controls.video.addEventListener("timeupdate", function() {
-		var w = controls.progress.style.width;
+		let w = controls.progress.style.width;
 		w = controls.video.currentTime / controls.video.duration * (controls.currentTime.offsetLeft - controls.progressBar.offsetLeft);
 		if (!controls.isMouseDown) {
 			controls.currentTime.innerHTML = toTimeFormat(controls.video.currentTime);
@@ -156,8 +156,8 @@ window.onload = function() {
 			controls.isMouseDown = true;
 			let oldProgress = controls.progress.clientWidth;
 			let oldTime = controls.video.currentTime;
-			var w = (e.pageX - this.offsetLeft);
-			var ct = w / (controls.currentTime.offsetLeft - this.offsetLeft) * controls.video.duration;				
+			let w = (e.pageX - this.offsetLeft);
+			let ct = w / (controls.currentTime.offsetLeft - this.offsetLeft) * controls.video.duration;				
 			
 			
 			controls.progress.style.width = w;
@@ -171,9 +171,9 @@ window.onload = function() {
 				controls.currentTime.innerHTML = toTimeFormat(ct);
 				controls.progress.style.width = w;
 				controls.video.currentTime = ct;
-			}
+			};
 			
-			controls.progressBar.onmouseup = function(e) {
+			controls.progressBar.addEventListener("mouseup", function(e) {
 				if (controls.isMouseDown) {
 					controls.isMouseDown = false;
 					controls.progress.style.width = w;
@@ -181,7 +181,7 @@ window.onload = function() {
 					controls.progressBar.onmousemove = null;
 					return;
 				}
-			}
+			});
 			
 			controls.progressBar.addEventListener("mouseout", function(e) {
 				if (controls.isMouseDown && 
@@ -204,22 +204,15 @@ window.onload = function() {
 toTimeFormat = function (time) {
 	time = Math.floor(time) + 1;
 	
-	var seconds = time % 60;
+	let seconds = time % 60;
 	time -= seconds;
 	time /= 60;
-	var minutes = time % 60;
+	let minutes = time % 60;
 	time -= minutes;
 	time /= 60;
-	var hours = time;
+	let hours = time;
 	
 	return ((hours < 10) ? ("0" + hours.toString()) : (hours.toString())) + ":" +
 		   ((minutes < 10) ? ("0" + minutes.toString()) : (minutes.toString())) + ":" +
 		   ((seconds < 10) ? ("0" + seconds.toString()) : (seconds.toString()));
 }
-
-//Запустить отображение в полноэкранном режиме
-function launchFullScreen(element) {
-	
-}
-// Выход из полноэкранного режима
- 

@@ -124,7 +124,7 @@ window.onload = function() {
 		controls.volume.style.display = "none";
 	});
 	controls.volButton.addEventListener("click", function(e) {
-		if (e.pageY > this.offsetTop) {
+		if (e.pageY > this.offsetTop + this.clientHeight - controls.progressBar.clientHeight) {
 			if (controls.volume.value == 0) {
 				controls.volume.value = controls.oldVolumeValue;
 				controls.volButton.style.backgroundImage = "url('src/icons/volume.jpg')";

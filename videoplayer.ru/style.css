@@ -1,0 +1,84 @@
+
+#controls {
+	display: flex;
+	width: 960px;
+	height: 25px;
+	align: center;
+}
+
+#controls span {
+	width: 25px;
+	height: inherit;
+}
+
+#controls div {
+	flex-grow: 82;
+	height: inherit;
+	background: #000;
+	display: flex;
+	justify-content: flex-end;
+}
+
+#time {
+	width: 15%;
+	flex-grow: 1;
+	color: #fff;
+	border-top: 1px solid #bbb;
+	margin: 0;
+	paddin-left: 1px;
+}
+
+#time span {
+	width: auto;
+	flex-grow: 0;
+}
+
+#current {
+	padding-left: 2px;
+	border-left: 1px solid #bbb;
+}
+
+#playpause {
+	background-image: url("icons/play.jpg");
+}
+
+#volume {
+	position: relative;
+	background-image: url("icons/volume.jpg");
+	background-repeat: no-repeat;
+	background-color: #aaa;
+	display: flex;
+}
+
+#volumeValue {
+	position: absolute;
+	left: -55px;
+	top: -75px;
+	display: none;
+	transform: rotate(270deg);
+}
+
+#moveL {
+	background-image: url("icons/moveL.jpg");
+}
+
+#moveR {
+	background-image: url("icons/moveR.jpg");
+}
+
+#fullScreen {
+	background-image: url("icons/fullScreen.jpg");
+}
+
+#speed {
+	background-image: url("icons/speed.jpg");
+}
+
+#total {
+	background-color: #aaa;
+}
+
+#speedSelect {
+	display: none;
+	margin-top: 25px;
+}

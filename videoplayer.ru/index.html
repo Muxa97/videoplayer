@@ -1,0 +1,33 @@
+<html>
+	<head>
+		<link rel="stylesheet" type="text/css" href="style.css">
+		<script type="text/javascript" src="script.js"></script>		
+	</head>
+	<body>
+		<div width = '960px' align = 'center'>
+			<video id="myvideo" src="src/video.mp4" width="960" height="540"></video>
+			<div id="controls">
+				<span id="playpause" ></span>
+				<span id = "volume"><input id = "volumeValue" type="range" min = "0" max = "100" step = "1" value = "50"/></span>
+				<span id = "moveL"></span>
+				<div id = "progressbar">
+					<span id = "total"></span>
+					<div id = "time">
+						<span id = "current">00:00</span> / <span id = "duration">00:00</span>
+					</div>
+				</div>			
+				<span id = "moveR"></span>
+				<span id = "speed">
+					<select id = "speedSelect">
+						<option value = 0.2>X 0.2</option>
+						<option value = 0.5>X 0.5</option>
+						<option selected value = 1>X 1</option>
+						<option value = 1.5>X 1.5</option>
+						<option value = 2>X 2</option>
+					</select>
+				</span>
+				<span id = "fullScreen"></span>
+			</div>
+		</div>
+	</body>
+</html>

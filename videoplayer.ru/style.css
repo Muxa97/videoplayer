@@ -39,12 +39,12 @@
 }
 
 #playpause {
-	background-image: url("icons/play.jpg");
+	background-image: url("src/icons/play.jpg");
 }
 
 #volume {
 	position: relative;
-	background-image: url("icons/volume.jpg");
+	background-image: url("src/icons/volume.jpg");
 	background-repeat: no-repeat;
 	background-color: #aaa;
 	display: flex;
@@ -59,19 +59,19 @@
 }
 
 #moveL {
-	background-image: url("icons/moveL.jpg");
+	background-image: url("src/icons/moveL.jpg");
 }
 
 #moveR {
-	background-image: url("icons/moveR.jpg");
+	background-image: url("src/icons/moveR.jpg");
 }
 
 #fullScreen {
-	background-image: url("icons/fullScreen.jpg");
+	background-image: url("src/icons/fullScreen.jpg");
 }
 
 #speed {
-	background-image: url("icons/speed.jpg");
+	background-image: url("src/icons/speed.jpg");
 }
 
 #total {

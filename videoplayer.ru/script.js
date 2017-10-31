@@ -115,7 +115,7 @@ window.onload = function() {
 			controls.currentTime.innerHTML = toTimeFormat(ct);
 		}
 		
-		document.onmouseup = function(e) {
+		controls.progressBar.onmouseup = function(e) {
 			controls.progress.style.width = w;
 			controls.video.currentTime = ct;
 			controls.progressBar.onmousemove = null;

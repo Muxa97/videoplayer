@@ -175,6 +175,8 @@ window.onload = function() {
 			
 			controls.progressBar.addEventListener("mouseup", function(e) {
 				if (controls.isMouseDown) {
+					w = (e.pageX - this.offsetLeft);
+					ct = w / (controls.currentTime.offsetLeft - this.offsetLeft) * controls.video.duration;	
 					controls.isMouseDown = false;
 					controls.progress.style.width = w;
 					controls.video.currentTime = ct;

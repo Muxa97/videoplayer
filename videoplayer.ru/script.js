@@ -1,6 +1,7 @@
 
 window.onload = function() {
 	let controls = {
+		main_container: document.getElementById("main_container"),
 		container: document.getElementById("control"),
 		video: document.getElementById("myvideo"),
 		ppButton: document.getElementById("playpause"),
@@ -20,22 +21,25 @@ window.onload = function() {
 	};	
 	
 	const timeOffset = 5;
+	controls.main_container.style.width = controls.video.width;
+	controls.progress.style.width = 0;
 	
 	controls.video.addEventListener("click", function() {
 		if (controls.video.paused) {
 			controls.video.play();
-			controls.ppButton.style.backgroundImage = "url('src/icons/pause.jpg')";
+			controls.ppButton.firstChild.setAttribute("class", "fa fa-pause");
 		}
 		else {
 			controls.video.pause();
-			controls.ppButton.style.backgroundImage = "url('src/icons/play.jpg')";
+			controls.ppButton.firstChild.setAttribute("class", "fa fa-play");
 		}
 	});
 	controls.fsButton.addEventListener("click", function() {
 		if (!controls.fullScreen) {
 			controls.fullScreen = true;
-			controls.fsButton.style.backgroundImage = "url('src/icons/normalScreen.jpg')";
+			controls.fsButton.firstChild.setAttribute("class", "fa fa-compress");
 			
+			controls.main_container.style.width = "100%";
 			controls.container.style.position = "absolute";
 			controls.container.style.zIndex = 2147483647;
 			controls.container.style.bottom = 0;
@@ -51,11 +55,11 @@ window.onload = function() {
 		else
 		{
 			controls.fullScreen = false;
-			controls.fsButton.style.backgroundImage = "url('src/icons/fullScreen.jpg')";
+			controls.fsButton.firstChild.setAttribute("class", "fa fa-expand");
 			
+			controls.main_container.style.width = controls.video.width;
 			controls.container.style.position = "relative";
 			controls.container.style.zIndex = 1;
-			
 			if(controls.video.exitFullscreen) {
 				controls.video.exitFullscreen();
 			} else if(controls.video.mozExitFullscreen) {
@@ -69,11 +73,11 @@ window.onload = function() {
 	controls.ppButton.addEventListener("click", function() {
 		if (controls.video.paused) {
 			controls.video.play();
-			controls.ppButton.style.backgroundImage = "url('src/icons/pause.jpg')";
+			controls.ppButton.firstChild.setAttribute("class", "fa fa-pause");
 		}
 		else {
 			controls.video.pause();
-			controls.ppButton.style.backgroundImage = "url('src/icons/play.jpg')";
+			controls.ppButton.firstChild.setAttribute("class", "fa fa-play");
 		}
 	});
 	
@@ -103,15 +107,15 @@ window.onload = function() {
 	controls.video.addEventListener("timeupdate", function() {
 		let w = controls.progress.style.width;
 		w = controls.video.currentTime / controls.video.duration * (controls.currentTime.offsetLeft - controls.progressBar.offsetLeft);
-		if (!controls.isMouseDown) {
+		if (!(controls.isMouseDown)) {
 			controls.currentTime.innerHTML = toTimeFormat(controls.video.currentTime);
-			controls.progress.style.width = Math.floor(w);
+			controls.progress.style.width = w;
 		}
 	});
 	
 	controls.video.addEventListener("ended", function() {
 		controls.video.pause();
-		controls.ppButton.style.backgroundImage = "url('src/icons/play.jpg')";
+		controls.ppButton.childNodes[0].setAttribute("class", "fa fa-play");
 	});
 	
 	controls.volume.addEventListener("input", function() {		
@@ -127,19 +131,22 @@ window.onload = function() {
 		if (e.pageY > this.offsetTop + this.clientHeight - controls.progressBar.clientHeight) {
 			if (controls.volume.value == 0) {
 				controls.volume.value = controls.oldVolumeValue;
-				controls.volButton.style.backgroundImage = "url('src/icons/volume.jpg')";
+				controls.volButton.firstChild.setAttribute("class", "fa fa-volume-up");
 			}
 			else {
 				controls.oldVolumeValue = controls.volume.value;
 				controls.volume.value = 0;
-				controls.volButton.style.backgroundImage = "url('src/icons/muted.jpg')";
+				controls.volButton.firstChild.setAttribute("class", "fa fa-volume-off");
 			}
 			controls.video.volume = controls.volume.value / 100;
 		}
 	});
 	
 	controls.spButton.addEventListener("click", function() {
-		controls.spSelect.style.display = "block";
+		(controls.spSelect.style.display == "none") ?
+			(controls.spSelect.style.display = "block") : (controls.spSelect.style.display = "none");
+		if (controls.fullScreen)
+			controls.spSelect.style.bottom = "0px";
 	});
 	
 	controls.spSelect.addEventListener("change", function() {
@@ -175,10 +182,12 @@ window.onload = function() {
 			
 			controls.progressBar.addEventListener("mouseup", function(e) {
 				if (controls.isMouseDown) {
-					w = (e.pageX - this.offsetLeft);
-					ct = w / (controls.currentTime.offsetLeft - this.offsetLeft) * controls.video.duration;	
 					controls.isMouseDown = false;
+					w = ((e.pageX < (controls.currentTime.offsetLeft)) ? (e.pageX) : 
+					(controls.currentTime.offsetLeft)) - controls.progressBar.offsetLeft;
 					controls.progress.style.width = w;
+					ct = w / (controls.currentTime.offsetLeft - controls.progressBar.offsetLeft) * controls.video.duration;			
+					controls.currentTime.innerHTML = toTimeFormat(ct);
 					controls.video.currentTime = ct;
 					controls.progressBar.onmousemove = null;
 					return;

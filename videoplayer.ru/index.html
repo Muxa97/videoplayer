@@ -1,33 +1,35 @@
 <html>
 	<head>
 		<link rel="stylesheet" type="text/css" href="style.css">
-		<script type="text/javascript" src="script.js"></script>		
+		<script src="https://use.fontawesome.com/a833eb121b.js"></script>
 	</head>
 	<body>
-		<div align = 'center'>
+		<div id = "main_container">
 			<video id="myvideo" src="src/video.mp4" width="960" height="540"></video>
 			<div id="control">
-				<span id="playpause" ></span>
-				<span id = "volume"><input id = "volumeValue" type="range" min = "0" max = "100" step = "1" value = "50"/></span>
-				<span id = "moveL"></span>
+				<span id="playpause" ><i class="fa fa-play" aria-hidden="true"></i></span>
+				<span id = "volume"><i class="fa fa-volume-up" aria-hidden="true"></i><input id = "volumeValue" type="range" min = "0" max = "100" step = "1" value = "50"></input></span>				
+				<span id = "moveL"><i class="fa fa-step-backward" aria-hidden="true"></i></span>
 				<div id = "progressbar">
 					<span id = "total"></span>
 					<div id = "time">
 						<span id = "current">00:00:00</span> / <span id = "duration">00:00:00</span>
 					</div>
 				</div>			
-				<span id = "moveR"></span>
-				<span id = "speed">
-					<select id = "speedSelect">
-						<option value = 0.2>X 0.2</option>
-						<option value = 0.5>X 0.5</option>
-						<option selected value = 1>X 1</option>
-						<option value = 1.5>X 1.5</option>
-						<option value = 2>X 2</option>
-					</select>
-				</span>
-				<span id = "fullScreen"></span>
+				<span id = "moveR"><i class="fa fa-step-forward" aria-hidden="true"></i></span>
+				<span id = "speed"><i class="fa fa-caret-down" aria-hidden="true"></i><select id = "speedSelect" size = "5">
+					<option value = 0.2>X 0.2</option>
+					<option value = 0.5>X 0.5</option>
+					<option selected value = 1>X 1</option>
+					<option value = 1.5>X 1.5</option>
+					<option value = 2>X 2</option>
+				</select></span>
+				
+				<span id = "fullScreen"><i class="fa fa-expand" aria-hidden="true"></i></span>
 			</div>
 		</div>
+		
+		
+		<script type="text/javascript" src="script.js"></script>
 	</body>
 </html>

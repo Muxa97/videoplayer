@@ -14,6 +14,7 @@ window.onload = function() {
 		volButton: document.getElementById("volume"),
 		spButton: document.getElementById("speed"),
 		spSelect: document.getElementById("speedSelect"),
+		loopButton: document.getElementById("loop"),
 		currentTime: document.getElementById("current"),
 		isMouseDown: false,
 		oldVolumeValue: 0,
@@ -161,7 +162,7 @@ window.onload = function() {
 	controls.progressBar.addEventListener("mousedown", function(e) {
 		if (e.pageX < controls.currentTime.offsetLeft) {
 			controls.isMouseDown = true;
-			let oldProgress = controls.progress.clientWidth;
+			let oldProgress = e.pageX - this.offsetLeft;//controls.progress.clientWidth;
 			let oldTime = controls.video.currentTime;
 			let w = (e.pageX - this.offsetLeft);
 			let ct = w / (controls.currentTime.offsetLeft - this.offsetLeft) * controls.video.duration;				
@@ -170,17 +171,19 @@ window.onload = function() {
 			controls.progress.style.width = w;
 			controls.currentTime.innerHTML = toTimeFormat(ct);
 			
-			controls.progressBar.onmousemove = function(e) {
-				w = ((e.pageX < (controls.currentTime.offsetLeft)) ? (e.pageX) : 
-					(controls.currentTime.offsetLeft)) - controls.progressBar.offsetLeft;
-				controls.progress.style.width = w;
-				ct = w / (controls.currentTime.offsetLeft - controls.progressBar.offsetLeft) * controls.video.duration;				
-				controls.currentTime.innerHTML = toTimeFormat(ct);
-				controls.progress.style.width = w;
-				controls.video.currentTime = ct;
+			document.onmousemove = function(e) {
+				if (e.pageX > controls.progressBar.offsetLeft && e.pageX < controls.currentTime.offsetLeft) {
+					w = ((e.pageX < (controls.currentTime.offsetLeft)) ? (e.pageX) : 
+						(controls.currentTime.offsetLeft)) - controls.progressBar.offsetLeft;
+					controls.progress.style.width = w;
+					ct = w / (controls.currentTime.offsetLeft - controls.progressBar.offsetLeft) * controls.video.duration;				
+					controls.currentTime.innerHTML = toTimeFormat(ct);
+					controls.progress.style.width = w;
+					controls.video.currentTime = ct;
+				}
 			};
 			
-			controls.progressBar.addEventListener("mouseup", function(e) {
+			document.addEventListener("mouseup", function(e) {
 				if (controls.isMouseDown) {
 					controls.isMouseDown = false;
 					w = ((e.pageX < (controls.currentTime.offsetLeft)) ? (e.pageX) : 
@@ -189,25 +192,20 @@ window.onload = function() {
 					ct = w / (controls.currentTime.offsetLeft - controls.progressBar.offsetLeft) * controls.video.duration;			
 					controls.currentTime.innerHTML = toTimeFormat(ct);
 					controls.video.currentTime = ct;
-					controls.progressBar.onmousemove = null;
-					return;
-				}
-			});
-			
-			controls.progressBar.addEventListener("mouseout", function(e) {
-				if (controls.isMouseDown && 
-				 (e.pageY < controls.progressBar.offsetTop || e.pageY > controls.progressBar.offsetTop + controls.progressBar.clientHeight || 
-				 e.pageX < controls.progressBar.offsetLeft || e.pageX > controls.currentTime.offsetLeft)) {
-					controls.isMouseDown = false;
-					controls.progress.style.width = oldProgress;
-					controls.video.currentTime = oldTime;
-					controls.progressBar.onmousemove = null;
+					document.onmousemove = null;
 					return;
 				}
 			});
 		}		
 	});
 	
+	controls.loopButton.addEventListener("click", function() {
+		controls.video.loop = !(controls.video.loop);
+		if (controls.video.loop)
+			controls.loopButton.style.fontSize = "1.3em";
+		else
+			controls.loopButton.style.fontSize = "1em";
+	});
 }
 
 

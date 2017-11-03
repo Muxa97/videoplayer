@@ -87,3 +87,8 @@
 ::-webkit-media-controls {
 	display: none !important;
 }
+
+#loop {
+	font-weight: 100;
+	font-size: 1em;
+}
